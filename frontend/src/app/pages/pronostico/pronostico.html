@@ -1,0 +1,106 @@
+<div class="container py-4">
+  <!-- Cabecera -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 border-bottom pb-3">
+        <div>
+          <h1 class="display-6 fw-bold mb-1">
+            <i class="bi bi-calendar3-week text-success me-2"></i>Pronóstico de 7 Días
+          </h1>
+          <p class="text-muted mb-0 fs-5">
+            Tiempo proyectado para Huancayo y el Valle del Mantaro en tiempo real desde Open-Meteo.
+          </p>
+              <p class="text-muted mb-0 small mt-1">
+                Máx y mín son las temperaturas más altas y bajas previstas. La probabilidad indica cuánto puede llover y los milímetros indican la cantidad estimada de lluvia.
+              </p>
+        </div>
+        <div class="badge bg-light text-success border border-success-subtle p-2 text-start">
+          <i class="bi bi-broadcast me-1"></i>
+          <span>Servicio meteorológico Open-Meteo</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Estado de Carga -->
+  <div class="row mb-4" *ngIf="cargando">
+    <div class="col-12 text-center py-5 agro-card">
+      <div class="spinner-border text-success" role="status" style="width: 3rem; height: 3rem;">
+        <span class="visually-hidden">Cargando pronóstico...</span>
+      </div>
+      <p class="mt-3 text-dark fw-semibold fs-5 mb-0">Obteniendo pronóstico semanal desde Open-Meteo...</p>
+    </div>
+  </div>
+
+  <!-- Estado de Error -->
+  <div class="row mb-4" *ngIf="!cargando && error">
+    <div class="col-12">
+      <div class="alert alert-danger d-flex align-items-center justify-content-between flex-wrap gap-2 p-3 rounded-3 shadow-sm" role="alert">
+        <div class="d-flex align-items-center gap-2">
+          <i class="bi bi-exclamation-triangle-fill fs-4"></i>
+          <div>
+            <strong>Error:</strong> {{ error }}
+          </div>
+        </div>
+        <button class="btn btn-outline-danger btn-sm" (click)="cargarPronostico()">
+          <i class="bi bi-arrow-clockwise me-1"></i> Reintentar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tarjetas de los 7 Días Reales -->
+  <div class="row g-3" *ngIf="!cargando && !error">
+    <div class="col-12 col-sm-6 col-lg-4 col-xl-3" *ngFor="let dia of diasPronostico">
+      <div class="agro-card p-3 h-100 text-center d-flex flex-column justify-content-between">
+        <div>
+          <!-- Día y Fecha -->
+          <div class="border-bottom pb-2 mb-3">
+            <h2 class="h5 fw-bold mb-0 text-dark">{{ dia.dia_semana }}</h2>
+            <small class="text-muted fw-semibold">{{ dia.fecha }}</small>
+          </div>
+
+          <!-- Icono y Descripción Sencilla -->
+          <div class="my-3">
+            <i class="bi fs-1 d-block mb-2" [ngClass]="climaService.obtenerIconoClima(dia.descripcion)"></i>
+            <p class="small text-secondary mb-0 fw-semibold">{{ dia.descripcion }}</p>
+          </div>
+        </div>
+
+        <div>
+          <!-- Temperaturas Máx y Mín -->
+          <div class="d-flex justify-content-center align-items-center gap-3 py-2 bg-light rounded-3 mb-3">
+            <div>
+              <small class="text-muted d-block fw-semibold">Máx</small>
+              <span class="fs-5 fw-bold text-danger">{{ dia.temperatura_maxima }}°C</span>
+            </div>
+            <div class="vr"></div>
+            <div>
+              <small class="text-muted d-block fw-semibold">Mín</small>
+              <span class="fs-5 fw-bold text-primary">{{ dia.temperatura_minima }}°C</span>
+            </div>
+          </div>
+
+          <!-- Probabilidad de Lluvia y Precipitación -->
+          <div class="p-2 rounded-2 mb-2" style="background-color: var(--azul-claro);">
+            <small class="d-flex justify-content-center align-items-center gap-1 text-primary fw-semibold">
+              <i class="bi bi-droplet-fill"></i> Prob. lluvia: {{ dia.probabilidad_lluvia }}%
+            </small>
+          </div>
+          <small class="text-muted d-block">
+            Lluvia prevista: <strong>{{ dia.precipitacion_mm }} mm</strong>
+          </small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Si no hay registros -->
+    <div class="col-12" *ngIf="diasPronostico.length === 0">
+      <div class="text-center p-5 agro-card">
+        <i class="bi bi-calendar-x fs-1 text-muted d-block mb-2"></i>
+        <h3 class="h5 fw-bold text-dark">No se encontraron datos de pronóstico</h3>
+        <p class="text-muted mb-0">Intenta actualizar la consulta en unos instantes.</p>
+      </div>
+    </div>
+  </div>
+</div>

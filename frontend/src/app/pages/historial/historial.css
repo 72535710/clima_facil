@@ -1,0 +1,6 @@
+/* Estilos para la tabla de historial */
+.table th {
+  color: var(--verde-bosque);
+  font-weight: 700;
+  border-top: none;
+}

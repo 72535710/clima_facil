@@ -1,0 +1,217 @@
+<div class="container py-4">
+  <!-- Encabezado con Identificación Clara de Conexión Real -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="banner-inicio p-4 rounded-4 text-white shadow-sm">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+          <div>
+            <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
+              <span class="badge bg-light text-success fw-bold px-3 py-2 fs-6">
+                <i class="bi bi-geo-alt-fill me-1"></i> {{ clima?.ubicacion || 'Huancayo, Valle del Mantaro' }}
+              </span>
+              <!-- Indicador de conexión real con Open-Meteo y SQL Server -->
+              <span class="badge bg-success bg-opacity-25 text-white border border-light border-opacity-50 px-3 py-2 fs-6 fw-semibold">
+                <i class="bi bi-broadcast me-1"></i> Datos en tiempo real (Open-Meteo & SQL Server)
+              </span>
+            </div>
+            <h1 class="h2 fw-bold mb-1 text-white">Panel del Clima</h1>
+            <p class="banner-subtexto mb-0">
+              Condiciones del tiempo actuales y recomendaciones para agricultores del Valle del Mantaro.
+            </p>
+          </div>
+          <div class="text-md-end">
+            <span class="badge bg-white bg-opacity-20 text-white px-3 py-2 border border-light border-opacity-50 fs-6 fw-semibold">
+              <i class="bi bi-clock me-1"></i> {{ clima?.fecha_hora || 'Hoy' }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Estado de Carga o Error del Clima Actual -->
+  <div class="row mb-4" *ngIf="cargandoClima">
+    <div class="col-12 text-center py-5 agro-card">
+      <div class="spinner-border text-success" role="status" style="width: 3rem; height: 3rem;">
+        <span class="visually-hidden">Cargando clima actual...</span>
+      </div>
+      <p class="mt-3 text-dark fw-semibold fs-5 mb-0">Consultando datos meteorológicos en Open-Meteo...</p>
+    </div>
+  </div>
+
+  <div class="row mb-4" *ngIf="!cargandoClima && errorClima">
+    <div class="col-12">
+      <div class="alert alert-danger d-flex align-items-center justify-content-between flex-wrap gap-2 p-3 rounded-3 shadow-sm" role="alert">
+        <div class="d-flex align-items-center gap-2">
+          <i class="bi bi-exclamation-triangle-fill fs-4"></i>
+          <div>
+            <strong>Error al obtener el clima:</strong> {{ errorClima }}
+          </div>
+        </div>
+        <button class="btn btn-outline-danger btn-sm" (click)="cargarClima()">
+          <i class="bi bi-arrow-clockwise me-1"></i> Reintentar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Panel con las 4 Tarjetas Meteorológicas Reales -->
+  <div class="row g-3 mb-4" *ngIf="!cargandoClima && !errorClima && clima">
+    <!-- 1. Temperatura -->
+    <div class="col-12 col-sm-6 col-lg-3">
+      <div class="agro-card p-3 p-md-4 h-100 border-top border-4 border-warning text-center">
+        <div class="icon-circle bg-warning bg-opacity-25 text-warning-emphasis mx-auto mb-2">
+          <i class="bi bi-thermometer-half fs-2"></i>
+        </div>
+        <span class="card-metrica-titulo text-uppercase fw-bold d-block">Temperatura</span>
+        <h2 class="display-5 fw-bold my-1 text-dark">{{ clima.temperatura }}°C</h2>
+        <p class="card-metrica-desc mb-0 fw-semibold">{{ clima.descripcion }}</p>
+      </div>
+    </div>
+
+    <div class="row mb-4" *ngIf="!cargandoClima && !errorClima && clima">
+      <div class="col-12">
+        <div class="alert alert-light border d-flex flex-wrap gap-3 mb-0 small" role="note">
+          <span><strong>Humedad:</strong> cantidad de vapor de agua en el aire.</span>
+          <span><strong>Probabilidad de lluvia:</strong> posibilidad de que llueva hoy.</span>
+          <span><strong>Precipitación:</strong> agua medida en milímetros.</span>
+          <span><strong>Viento:</strong> velocidad del aire en kilómetros por hora.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Humedad -->
+    <div class="col-12 col-sm-6 col-lg-3">
+      <div class="agro-card p-3 p-md-4 h-100 border-top border-4 border-info text-center">
+        <div class="icon-circle bg-info bg-opacity-25 text-primary mx-auto mb-2">
+          <i class="bi bi-moisture fs-2"></i>
+        </div>
+        <span class="card-metrica-titulo text-uppercase fw-bold d-block">Humedad</span>
+        <h2 class="display-5 fw-bold my-1 text-dark">{{ clima.humedad }}%</h2>
+        <p class="card-metrica-desc mb-0 fw-semibold">Nivel en el ambiente</p>
+      </div>
+    </div>
+
+    <!-- 3. Probabilidad de Lluvia -->
+    <div class="col-12 col-sm-6 col-lg-3">
+      <div class="agro-card p-3 p-md-4 h-100 border-top border-4 border-primary text-center">
+        <div class="icon-circle bg-primary bg-opacity-25 text-primary mx-auto mb-2">
+          <i class="bi bi-cloud-rain-fill fs-2"></i>
+        </div>
+        <span class="card-metrica-titulo text-uppercase fw-bold d-block">Prob. de Lluvia</span>
+        <h2 class="display-5 fw-bold my-1 text-dark">{{ clima.probabilidad_lluvia }}%</h2>
+        <p class="card-metrica-desc mb-0 fw-semibold">Precipitación: {{ clima.precipitacion }} mm</p>
+      </div>
+    </div>
+
+    <!-- 4. Viento -->
+    <div class="col-12 col-sm-6 col-lg-3">
+      <div class="agro-card p-3 p-md-4 h-100 border-top border-4 border-success text-center">
+        <div class="icon-circle bg-success bg-opacity-25 text-success mx-auto mb-2">
+          <i class="bi bi-wind fs-2"></i>
+        </div>
+        <span class="card-metrica-titulo text-uppercase fw-bold d-block">Viento</span>
+        <h2 class="display-5 fw-bold my-1 text-dark">{{ clima.viento }} <span class="fs-4">km/h</span></h2>
+        <p class="card-metrica-desc mb-0 fw-semibold">Velocidad del viento</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Estado de Carga o Error de Recomendación -->
+  <div class="row mb-4" *ngIf="cargandoRecomendacion">
+    <div class="col-12 text-center py-4 agro-card">
+      <div class="spinner-border text-success" role="status">
+        <span class="visually-hidden">Cargando recomendación destacada...</span>
+      </div>
+      <p class="mt-2 text-dark fw-semibold mb-0">Cargando recomendación desde SQL Server...</p>
+    </div>
+  </div>
+
+  <div class="row mb-4" *ngIf="!cargandoRecomendacion && errorRecomendacion">
+    <div class="col-12">
+      <div class="alert alert-warning d-flex align-items-center justify-content-between p-3 rounded-3" role="alert">
+        <div class="d-flex align-items-center gap-2">
+          <i class="bi bi-database-exclamation fs-4"></i>
+          <div>{{ errorRecomendacion }}</div>
+        </div>
+        <button class="btn btn-outline-dark btn-sm" (click)="cargarRecomendacion()">
+          <i class="bi bi-arrow-clockwise me-1"></i> Reintentar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notificaciones de Guardado en Historial -->
+  <div class="row mb-3" *ngIf="mensajeHistorialExito">
+    <div class="col-12">
+      <div class="alert alert-success alert-dismissible fade show d-flex align-items-center gap-2 p-3 rounded-3 shadow-sm" role="alert">
+        <i class="bi bi-check-circle-fill fs-4 text-success"></i>
+        <div>
+          <strong>¡Registro exitoso!</strong> {{ mensajeHistorialExito }}
+          <a routerLink="/historial" class="fw-bold ms-2 text-success text-decoration-underline">Ver en el Historial</a>
+        </div>
+        <button type="button" class="btn-close" (click)="mensajeHistorialExito = null" aria-label="Cerrar"></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mb-3" *ngIf="mensajeHistorialError">
+    <div class="col-12">
+      <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center gap-2 p-3 rounded-3 shadow-sm" role="alert">
+        <i class="bi bi-exclamation-triangle-fill fs-4 text-danger"></i>
+        <div>{{ mensajeHistorialError }}</div>
+        <button type="button" class="btn-close" (click)="mensajeHistorialError = null" aria-label="Cerrar"></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recomendación Agrícola Destacada Real -->
+  <div class="row mb-4" *ngIf="!cargandoRecomendacion && recomendacionDestacada">
+    <div class="col-12">
+      <div class="agro-card p-4 p-md-5 border-start border-5 border-success">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+          <div class="d-flex align-items-center gap-2 flex-wrap">
+            <span class="badge bg-success text-white px-3 py-2 rounded-pill fs-6 fw-bold">
+              <i class="bi bi-lightbulb-fill me-1"></i> Recomendación Destacada
+            </span>
+            <span class="badge bg-light text-dark border px-3 py-2 rounded-pill fs-6 fw-bold">
+              Cultivo: {{ recomendacionDestacada.cultivo }}
+            </span>
+            <span class="badge bg-warning bg-opacity-25 text-dark border border-warning px-3 py-2 rounded-pill fs-6 fw-semibold">
+              Nivel: {{ recomendacionDestacada.nivel }}
+            </span>
+          </div>
+          <span class="badge bg-white text-dark border px-3 py-2 fs-6 fw-semibold shadow-sm">
+            <i class="bi bi-cloud-sun text-primary me-1"></i> Condición: {{ recomendacionDestacada.condicion_climatica }}
+          </span>
+        </div>
+
+        <h2 class="h4 fw-bold text-dark mb-2">Consejo para tu labor agrícola</h2>
+        <p class="fs-5 text-dark mb-4 recomendacion-texto">
+          {{ recomendacionDestacada.mensaje }}
+        </p>
+
+        <!-- Botones de Acción Explícita del Usuario -->
+        <div class="d-flex flex-wrap align-items-center gap-3">
+          <!-- Acción Explícita para Registrar Consulta en el Historial -->
+          <button 
+            type="button" 
+            class="btn btn-agro-secondary d-flex align-items-center gap-2"
+            (click)="guardarConsultaEnHistorial()"
+            [disabled]="guardandoHistorial || !clima">
+            <i class="bi" [class.bi-bookmark-plus]="!guardandoHistorial" [class.bi-hourglass-split]="guardandoHistorial"></i>
+            <span>{{ guardandoHistorial ? 'Guardando consulta...' : 'Guardar esta consulta en el historial' }}</span>
+          </button>
+
+          <a routerLink="/recomendaciones" class="btn btn-agro-primary">
+            Ver todas las recomendaciones <i class="bi bi-arrow-right ms-1"></i>
+          </a>
+          
+          <a routerLink="/pronostico" class="btn btn-agro-outline">
+            Ver pronóstico de 7 días <i class="bi bi-calendar3 ms-1"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

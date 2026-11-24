@@ -1,0 +1,35 @@
+# Clima Fácil — .gitignore raíz
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editores
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Variables de entorno (NUNCA subir a Git)
+**/.env
+**/.env.*
+!**/.env.example
+*.env.local
+
+# Archivos temporales
+*.log
+*.tmp
+# Entornos virtuales de Python
+**/.venv/
+**/venv/
+
+# Dependencias y compilación
+**/node_modules/
+**/dist/
+**/.angular/
+**/coverage/
+
+# Archivos temporales de Python
+**/__pycache__/
+*.py[cod]

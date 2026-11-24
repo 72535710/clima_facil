@@ -1,0 +1,124 @@
+/* Importación de Bootstrap y Bootstrap Icons */
+@import "bootstrap/dist/css/bootstrap.min.css";
+@import "bootstrap-icons/font/bootstrap-icons.css";
+
+/* Variables de Color del Proyecto AgroClima Fácil */
+:root {
+  --verde-bosque: #234E35;
+  --verde-agricola: #78A65A;
+  --crema: #F4EBD7;
+  --amarillo: #E6AD45;
+  --azul-claro: #E8F1F5;
+  --blanco: #FFFFFF;
+  --texto-oscuro: #1b2e22;
+  --texto-muted: #536b5c;
+  --borde-suave: #dbe7df;
+  --sombra-suave: 0 4px 12px rgba(35, 78, 53, 0.08);
+}
+
+/* Estilos Globales Accesibles */
+body {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background-color: #f8faf8;
+  color: var(--texto-oscuro);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Tipografía y accesibilidad para agricultores */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--verde-bosque);
+  font-weight: 700;
+}
+
+/* Botones con estilo propio y alto contraste */
+.btn-agro-primary {
+  background-color: var(--verde-bosque);
+  color: #ffffff;
+  border: 2px solid var(--verde-bosque);
+  font-weight: 600;
+  padding: 0.6rem 1.25rem;
+  border-radius: 10px;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-agro-primary:hover, .btn-agro-primary:focus {
+  background-color: #1a3c28;
+  border-color: #1a3c28;
+  color: #ffffff;
+}
+
+.btn-agro-secondary {
+  background-color: var(--verde-agricola);
+  color: #ffffff;
+  border: 2px solid var(--verde-agricola);
+  font-weight: 600;
+  padding: 0.6rem 1.25rem;
+  border-radius: 10px;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-agro-secondary:hover, .btn-agro-secondary:focus {
+  background-color: #658e4a;
+  border-color: #658e4a;
+  color: #ffffff;
+}
+
+.btn-agro-outline {
+  background-color: transparent;
+  color: var(--verde-bosque);
+  border: 2px solid var(--verde-bosque);
+  font-weight: 600;
+  padding: 0.6rem 1.25rem;
+  border-radius: 10px;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-agro-outline:hover, .btn-agro-outline:focus, .btn-agro-outline.active {
+  background-color: var(--verde-bosque);
+  color: #ffffff;
+}
+
+/* Tarjetas agrícolas */
+.agro-card {
+  background-color: #ffffff;
+  border-radius: 14px;
+  border: 1px solid var(--borde-suave);
+  box-shadow: var(--sombra-suave);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.agro-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(35, 78, 53, 0.12);
+}
+
+/* Insignias amigables */
+.badge-alerta {
+  background-color: #fdf2e9;
+  color: #a04000;
+  border: 1px solid #f5cba7;
+  font-weight: 600;
+}
+
+.badge-favorable {
+  background-color: #eafaf1;
+  color: #1e8449;
+  border: 1px solid #a9dfbf;
+  font-weight: 600;
+}
+
+.badge-precaucion {
+  background-color: #fef9e7;
+  color: #9a7d0a;
+  border: 1px solid #f9e79f;
+  font-weight: 600;
+}
+
+.badge-info {
+  background-color: var(--azul-claro);
+  color: #1f618d;
+  border: 1px solid #aed6f1;
+  font-weight: 600;
+}

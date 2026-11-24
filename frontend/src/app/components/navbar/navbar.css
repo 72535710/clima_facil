@@ -1,0 +1,55 @@
+.agro-navbar {
+  background-color: var(--verde-bosque);
+  border-bottom: 3px solid var(--verde-agricola);
+}
+
+.brand-icon-box {
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  background-color: var(--verde-agricola);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+.brand-title {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #FFFFFF;
+  letter-spacing: -0.3px;
+  line-height: 1.1;
+}
+
+.brand-subtitle {
+  font-size: 0.75rem;
+  color: var(--crema);
+  font-weight: 500;
+}
+
+.custom-nav-link {
+  color: #FFFFFF;
+  font-size: 1.05rem;
+  font-weight: 600;
+  padding: 0.65rem 1.1rem;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.custom-nav-link i {
+  font-size: 1.15rem;
+  color: var(--amarillo);
+}
+
+.custom-nav-link:hover {
+  background-color: rgba(255, 255, 255, 0.12);
+  color: #FFFFFF;
+}
+
+.custom-nav-link.active-nav {
+  background-color: var(--verde-agricola);
+  color: #FFFFFF;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.custom-nav-link.active-nav i {
+  color: #FFFFFF;
+}

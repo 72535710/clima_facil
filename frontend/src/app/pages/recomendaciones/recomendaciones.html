@@ -1,0 +1,152 @@
+<div class="container py-4">
+  <!-- Cabecera -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 border-bottom pb-3">
+        <div>
+          <h1 class="display-6 fw-bold mb-1">
+            <i class="bi bi-lightbulb-fill text-warning me-2"></i>Recomendaciones Agrícolas
+          </h1>
+          <p class="text-muted mb-0 fs-5">
+            Consejos obtenidos directamente desde SQL Server según el cultivo y la condición meteorológica.
+          </p>
+              <p class="text-muted mb-0 small mt-1">
+                Estas recomendaciones son orientativas y prácticas; no reemplazan alertas ni avisos oficiales de SENAMHI.
+              </p>
+        </div>
+        <div class="badge bg-light text-dark border p-2 text-start">
+          <i class="bi bi-database-check text-success me-1"></i>
+          <span>SQL Server: sp_ListarRecomendaciones</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Selector Simple por Cultivo mediante id_cultivo -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="d-flex align-items-center gap-2 flex-wrap">
+        <span class="fw-semibold text-muted small me-2">Filtrar por cultivo:</span>
+        
+        <button 
+          type="button" 
+          class="btn btn-sm btn-filtro-simple" 
+          [class.activo]="idCultivoSeleccionado === 0"
+          (click)="cargarRecomendaciones(0)">
+          <i class="bi bi-grid-fill me-1"></i> Todos los cultivos
+        </button>
+
+        <!-- Botones dinámicos según los cultivos de SQL Server si están disponibles -->
+        <ng-container *ngIf="cultivos.length > 0; else botonesFallback">
+          <button 
+            *ngFor="let c of cultivos"
+            type="button" 
+            class="btn btn-sm btn-filtro-simple" 
+            [class.activo]="idCultivoSeleccionado === c.id_cultivo"
+            (click)="cargarRecomendaciones(c.id_cultivo)">
+            {{ c.nombre }}
+          </button>
+        </ng-container>
+
+        <!-- Fallback con los 3 cultivos -->
+        <ng-template #botonesFallback>
+          <button 
+            type="button" 
+            class="btn btn-sm btn-filtro-simple" 
+            [class.activo]="idCultivoSeleccionado === 1"
+            (click)="cargarRecomendaciones(1)">
+            Papa
+          </button>
+          <button 
+            type="button" 
+            class="btn btn-sm btn-filtro-simple" 
+            [class.activo]="idCultivoSeleccionado === 2"
+            (click)="cargarRecomendaciones(2)">
+            Maíz
+          </button>
+          <button 
+            type="button" 
+            class="btn btn-sm btn-filtro-simple" 
+            [class.activo]="idCultivoSeleccionado === 3"
+            (click)="cargarRecomendaciones(3)">
+            Haba
+          </button>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+
+  <!-- Estado de Carga -->
+  <div class="row mb-4" *ngIf="cargando">
+    <div class="col-12 text-center py-5 agro-card">
+      <div class="spinner-border text-success" role="status" style="width: 3rem; height: 3rem;">
+        <span class="visually-hidden">Cargando recomendaciones...</span>
+      </div>
+      <p class="mt-3 text-dark fw-semibold fs-5 mb-0">Consultando recomendaciones en SQL Server...</p>
+    </div>
+  </div>
+
+  <!-- Estado de Error -->
+  <div class="row mb-4" *ngIf="!cargando && error">
+    <div class="col-12">
+      <div class="alert alert-danger d-flex align-items-center justify-content-between flex-wrap gap-2 p-3 rounded-3 shadow-sm" role="alert">
+        <div class="d-flex align-items-center gap-2">
+          <i class="bi bi-exclamation-triangle-fill fs-4"></i>
+          <div>
+            <strong>Error:</strong> {{ error }}
+          </div>
+        </div>
+        <button class="btn btn-outline-danger btn-sm" (click)="cargarRecomendaciones(idCultivoSeleccionado)">
+          <i class="bi bi-arrow-clockwise me-1"></i> Reintentar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lista de Recomendaciones Reales -->
+  <div class="row g-3" *ngIf="!cargando && !error">
+    <div class="col-12 col-md-6" *ngFor="let rec of recomendaciones">
+      <div class="agro-card p-4 h-100 d-flex flex-column justify-content-between">
+        <div>
+          <!-- Cabecera de la Recomendación -->
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <span class="badge bg-success text-white px-3 py-2 rounded-pill fs-6">
+              Cultivo: {{ rec.cultivo }}
+            </span>
+            <span class="badge px-3 py-2 rounded-pill" [ngClass]="obtenerClaseNivel(rec.nivel)">
+              {{ rec.nivel }}
+            </span>
+          </div>
+
+          <!-- Condición Meteorológica Desencadenante -->
+          <div class="p-2 px-3 rounded-2 bg-light border mb-3 d-flex align-items-center gap-2">
+            <i class="bi bi-cloud-sun text-secondary fs-5"></i>
+            <small class="text-dark"><strong>Condición meteorológica:</strong> {{ rec.condicion_climatica }}</small>
+          </div>
+
+          <!-- Mensaje / Consejo Directo -->
+          <h2 class="h5 fw-bold text-dark mb-2">Mensaje del técnico agrícola:</h2>
+          <p class="fs-6 text-dark mb-0 recomendacion-texto">
+            {{ rec.mensaje }}
+          </p>
+        </div>
+
+        <div class="border-top pt-2 mt-3 text-end">
+          <small class="text-muted">ID de Recomendación #{{ rec.id_recomendacion }}</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Si no hay recomendaciones para el filtro -->
+    <div class="col-12" *ngIf="recomendaciones.length === 0">
+      <div class="text-center p-5 agro-card">
+        <i class="bi bi-inbox fs-1 text-muted d-block mb-2"></i>
+        <h3 class="h5 fw-bold text-dark">No hay recomendaciones registradas</h3>
+        <p class="text-muted mb-3">No se encontraron recomendaciones en SQL Server para el cultivo seleccionado.</p>
+        <button class="btn btn-agro-outline" (click)="cargarRecomendaciones(0)">
+          Ver todos los cultivos
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

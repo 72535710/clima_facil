@@ -1,0 +1,60 @@
+<footer class="agro-footer mt-auto pt-5 pb-4">
+  <div class="container">
+    <div class="row g-4 mb-4">
+      <!-- Columna 1: Presentación -->
+      <div class="col-12 col-md-5">
+        <div class="d-flex align-items-center gap-2 mb-3">
+          <i class="bi bi-cloud-sun-fill fs-3 text-warning"></i>
+          <span class="fs-4 fw-bold text-white">Clima Fácil</span>
+        </div>
+        <p class="text-white-50 pe-lg-4 mb-3">
+          Aplicación web orientada a pequeños agricultores de Huancayo y el valle del Mantaro, Perú.
+          Muestra información meteorológica de manera sencilla y recomendaciones agrícolas fáciles de comprender.
+        </p>
+        <div class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill bg-light text-dark fw-bold" style="font-size: 0.85rem;">
+          <i class="bi bi-mortarboard-fill text-success"></i> Proyecto Académico
+        </div>
+      </div>
+
+      <!-- Columna 2: Navegación Rápida -->
+      <div class="col-6 col-md-3">
+        <h5 class="text-white fw-bold mb-3 border-bottom pb-2" style="border-color: rgba(255,255,255,0.2) !important;">
+          Secciones
+        </h5>
+        <ul class="list-unstyled d-flex flex-column gap-2 footer-links">
+          <li><a routerLink="/inicio"><i class="bi bi-chevron-right me-1"></i> Inicio</a></li>
+          <li><a routerLink="/pronostico"><i class="bi bi-chevron-right me-1"></i> Pronóstico</a></li>
+          <li><a routerLink="/recomendaciones"><i class="bi bi-chevron-right me-1"></i> Recomendaciones</a></li>
+          <li><a routerLink="/cultivos"><i class="bi bi-chevron-right me-1"></i> Cultivos</a></li>
+          <li><a routerLink="/historial"><i class="bi bi-chevron-right me-1"></i> Historial</a></li>
+        </ul>
+      </div>
+
+      <!-- Columna 3: Información Regional -->
+      <div class="col-6 col-md-4">
+        <h5 class="text-white fw-bold mb-3 border-bottom pb-2" style="border-color: rgba(255,255,255,0.2) !important;">
+          Valle del Mantaro
+        </h5>
+        <p class="text-white-50 small mb-2">
+          Diseñado para los cultivos tradicionales de la zona: Papa, Maíz y Haba, adaptado a las condiciones de temperatura, vientos y heladas del valle.
+        </p>
+        <div class="p-3 rounded-3" style="background-color: rgba(255,255,255,0.08);">
+          <div class="d-flex align-items-center gap-2 text-warning fw-semibold mb-1">
+            <i class="bi bi-geo-alt-fill"></i> Huancayo, Junín
+          </div>
+          <small class="text-white-50">Sierra central del Perú</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Barra de Créditos -->
+    <div class="border-top pt-3 d-flex flex-column flex-md-row justify-content-between align-items-center gap-2 text-white-50 small" style="border-color: rgba(255,255,255,0.15) !important;">
+      <div>
+        &copy; {{ anioActual }} Clima Fácil. Todos los derechos reservados.
+      </div>
+      <div>
+        Datos en tiempo real: Open-Meteo (clima) · SQL Server (cultivos y recomendaciones).
+      </div>
+    </div>
+  </div>
+</footer>

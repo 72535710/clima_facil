@@ -1,0 +1,9 @@
+/* Estilos para el pronóstico sencillo */
+.agro-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.agro-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(35, 78, 53, 0.12);
+}

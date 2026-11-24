@@ -1,0 +1,36 @@
+.banner-inicio {
+  background: linear-gradient(135deg, var(--verde-bosque) 0%, #29553b 100%);
+  border-left: 6px solid var(--amarillo);
+}
+
+.banner-subtexto {
+  color: #f3f8f5;
+  font-size: 1.05rem;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.icon-circle {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-metrica-titulo {
+  font-size: 0.92rem;
+  color: var(--verde-bosque);
+  letter-spacing: 0.5px;
+}
+
+.card-metrica-desc {
+  font-size: 0.98rem;
+  color: #2b3e32;
+}
+
+.recomendacion-texto {
+  line-height: 1.6;
+  color: #1a2b20 !important;
+}

@@ -1,0 +1,18 @@
+.agro-footer {
+  background-color: var(--verde-bosque);
+  color: var(--crema);
+  border-top: 4px solid var(--verde-agricola);
+}
+
+.footer-links a {
+  color: var(--crema);
+  text-decoration: none;
+  font-size: 0.95rem;
+  transition: color 0.2s ease, transform 0.2s ease;
+  display: inline-block;
+}
+
+.footer-links a:hover {
+  color: var(--amarillo);
+  transform: translateX(3px);
+}

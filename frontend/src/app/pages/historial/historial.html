@@ -1,0 +1,213 @@
+<div class="container py-4">
+  <!-- Cabecera -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 border-bottom pb-3">
+        <div>
+          <h1 class="display-6 fw-bold mb-1">
+            <i class="bi bi-clock-history text-success me-2"></i>Historial de Recomendaciones
+          </h1>
+          <p class="text-muted mb-0 fs-5">
+            Registro de consultas almacenadas en SQL Server mediante el procedimiento sp_ListarHistorial.
+          </p>
+        </div>
+        <!-- Botón de Acción Explícita del Usuario -->
+        <div>
+          <button 
+            type="button" 
+            class="btn btn-agro-primary d-flex align-items-center gap-2 shadow-sm"
+            (click)="toggleFormularioRegistro()">
+            <i class="bi" [class.bi-plus-circle]="!mostrarFormularioRegistro" [class.bi-x-circle]="mostrarFormularioRegistro"></i>
+            <span>{{ mostrarFormularioRegistro ? 'Cancelar' : 'Registrar Nueva Consulta' }}</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Alertas de Éxito o Error de Registro -->
+  <div class="row mb-3" *ngIf="mensajeExito">
+    <div class="col-12">
+      <div class="alert alert-success alert-dismissible fade show d-flex align-items-center gap-2 p-3 rounded-3 shadow-sm" role="alert">
+        <i class="bi bi-check-circle-fill fs-4 text-success"></i>
+        <div class="fw-semibold">{{ mensajeExito }}</div>
+        <button type="button" class="btn-close" (click)="mensajeExito = null" aria-label="Cerrar"></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mb-3" *ngIf="mensajeErrorRegistro">
+    <div class="col-12">
+      <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center gap-2 p-3 rounded-3 shadow-sm" role="alert">
+        <i class="bi bi-exclamation-triangle-fill fs-4 text-danger"></i>
+        <div>{{ mensajeErrorRegistro }}</div>
+        <button type="button" class="btn-close" (click)="mensajeErrorRegistro = null" aria-label="Cerrar"></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Panel de Registro Explícito de Consulta (Control del Usuario) -->
+  <div class="row mb-4" *ngIf="mostrarFormularioRegistro">
+    <div class="col-12">
+      <div class="agro-card p-4 border-top border-4 border-success">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h2 class="h5 fw-bold text-dark mb-0">
+            <i class="bi bi-pencil-square text-success me-2"></i>Registrar Consulta en el Historial
+          </h2>
+          <span class="badge bg-light text-dark border">Procedimiento sp_RegistrarHistorial</span>
+        </div>
+        <p class="text-secondary small mb-3">
+          El registro solo se almacena cuando presionas el botón "Guardar en el Historial". Los valores climáticos se toman de la observación actual de Open-Meteo.
+        </p>
+
+        <div class="row g-3">
+          <!-- Selección de Recomendación -->
+          <div class="col-12 col-md-6">
+            <label class="form-label fw-bold text-dark small">Recomendación a consultar:</label>
+            <select class="form-select shadow-none" [(ngModel)]="idRecomendacionSeleccionada">
+              <option *ngFor="let r of recomendacionesDisponibles" [value]="r.id_recomendacion">
+                [{{ r.cultivo }}] {{ r.condicion_climatica }} - Nivel {{ r.nivel }}
+              </option>
+            </select>
+          </div>
+
+          <!-- Métricas del Clima Actual (Informativas) -->
+          <div class="col-12 col-md-6">
+            <label class="form-label fw-bold text-dark small">Condiciones climáticas a registrar:</label>
+            <div class="p-2 bg-light rounded border text-muted small">
+              <ng-container *ngIf="climaActual; else climaNoDisponible">
+                <span class="me-2"><strong>Temp:</strong> {{ climaActual.temperatura }}°C</span>
+                <span class="me-2"><strong>Prob. lluvia:</strong> {{ climaActual.probabilidad_lluvia }}% ({{ climaActual.precipitacion }} mm)</span>
+                <span class="me-2"><strong>Humedad:</strong> {{ climaActual.humedad }}%</span>
+                <span><strong>Viento:</strong> {{ climaActual.viento }} km/h</span>
+              </ng-container>
+              <ng-template #climaNoDisponible>
+                Datos climáticos no disponibles. Espera a que el servicio responda.
+              </ng-template>
+            </div>
+          </div>
+
+          <!-- Botón de Guardado -->
+          <div class="col-12 d-flex justify-content-end gap-2 mt-3">
+            <button type="button" class="btn btn-outline-secondary btn-sm" (click)="toggleFormularioRegistro()">
+              Cancelar
+            </button>
+            <button 
+              type="button" 
+              class="btn btn-agro-primary btn-sm d-flex align-items-center gap-1"
+              (click)="registrarConsultaExplicita()"
+              [disabled]="guardando || !climaActual">
+              <i class="bi" [class.bi-save]="!guardando" [class.bi-hourglass-split]="guardando"></i>
+              <span>{{ guardando ? 'Guardando en base de datos...' : 'Guardar en el Historial' }}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Estado de Carga -->
+  <div class="row mb-4" *ngIf="cargando">
+    <div class="col-12 text-center py-5 agro-card">
+      <div class="spinner-border text-success" role="status" style="width: 3rem; height: 3rem;">
+        <span class="visually-hidden">Cargando historial...</span>
+      </div>
+      <p class="mt-3 text-dark fw-semibold fs-5 mb-0">Consultando historial en SQL Server...</p>
+    </div>
+  </div>
+
+  <!-- Estado de Error -->
+  <div class="row mb-4" *ngIf="!cargando && error">
+    <div class="col-12">
+      <div class="alert alert-danger d-flex align-items-center justify-content-between flex-wrap gap-2 p-3 rounded-3 shadow-sm" role="alert">
+        <div class="d-flex align-items-center gap-2">
+          <i class="bi bi-exclamation-triangle-fill fs-4"></i>
+          <div>
+            <strong>Error:</strong> {{ error }}
+          </div>
+        </div>
+        <button class="btn btn-outline-danger btn-sm" (click)="cargarHistorial()">
+          <i class="bi bi-arrow-clockwise me-1"></i> Reintentar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabla Sencilla y Responsiva con Datos Reales de SQL Server -->
+  <div class="row" *ngIf="!cargando && !error">
+    <div class="col-12">
+      <div class="agro-card p-3 p-md-4">
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+              <tr>
+                <th scope="col" style="min-width: 140px;">Fecha Consulta</th>
+                <th scope="col" style="min-width: 100px;">Ubicación</th>
+                <th scope="col" style="min-width: 100px;">Cultivo</th>
+                <th scope="col" style="min-width: 110px;">Nivel</th>
+                <th scope="col" style="min-width: 250px;">Recomendación</th>
+                <th scope="col" class="text-center" style="min-width: 100px;">Temperatura</th>
+                <th scope="col" class="text-center" style="min-width: 110px;">Prob. Lluvia</th>
+                <th scope="col" class="text-center" style="min-width: 100px;">Humedad</th>
+                <th scope="col" class="text-center" style="min-width: 100px;">Viento</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of registrosHistorial">
+                <td class="fw-semibold text-dark">
+                  <i class="bi bi-calendar3 text-muted me-1"></i> {{ item.fecha_consulta }}
+                </td>
+                <td>
+                  <span class="badge bg-light text-dark border">
+                    <i class="bi bi-geo-alt me-1"></i> {{ item.ubicacion }}
+                  </span>
+                </td>
+                <td>
+                  <span class="badge bg-success text-white px-2 py-1">
+                    {{ item.cultivo }}
+                  </span>
+                </td>
+                <td>
+                  <span class="badge px-2 py-1" [ngClass]="obtenerClaseNivel(item.nivel)">
+                    {{ item.nivel }}
+                  </span>
+                </td>
+                <td class="text-dark small">
+                  {{ item.mensaje }}
+                </td>
+                <td class="text-center">
+                  <span class="badge bg-light text-dark border px-2 py-1 fw-bold fs-6">
+                    {{ item.temperatura }}°C
+                  </span>
+                </td>
+                <td class="text-center">
+                  <span class="text-primary fw-semibold small">
+                    {{ item.probabilidad_lluvia }}% ({{ item.precipitacion_mm }} mm)
+                  </span>
+                </td>
+                <td class="text-center text-muted small">
+                  {{ item.humedad }}%
+                </td>
+                <td class="text-center text-muted small">
+                  {{ item.viento_kmh }} km/h
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Si no hay registros en la tabla -->
+    <div class="col-12 mt-3" *ngIf="registrosHistorial.length === 0">
+      <div class="text-center p-5 agro-card">
+        <i class="bi bi-journal-x fs-1 text-muted d-block mb-2"></i>
+        <h3 class="h5 fw-bold text-dark">No hay consultas registradas en el historial</h3>
+        <p class="text-muted mb-3">Aún no se ha guardado ninguna consulta en la base de datos SQL Server.</p>
+        <button class="btn btn-agro-primary btn-sm" (click)="toggleFormularioRegistro()">
+          Registrar primera consulta
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
